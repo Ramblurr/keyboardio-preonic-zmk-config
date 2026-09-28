@@ -32,9 +32,9 @@
               help = "Initialize/update the local workspace from config/west.yml";
               command = ''
                 set -euo pipefail
-                mkdir -p "$PRJ_ROOT/.zmk/config"
-                cp "$PRJ_ROOT/config/west.yml" "$PRJ_ROOT/.zmk/config/west.yml"
-                cd "$PRJ_ROOT/.zmk"
+                mkdir -p "$PRJ_ROOT/out/zmk/config"
+                cp "$PRJ_ROOT/config/west.yml" "$PRJ_ROOT/out/zmk/config/west.yml"
+                cd "$PRJ_ROOT/out/zmk"
                 if [[ ! -d .west ]]; then
                   west init -l config
                 fi
@@ -52,11 +52,11 @@
                   ""|-*) ;;
                   *) echo "Unknown layout: $1 (use qwerty or colemak-dhm)" >&2; exit 2 ;;
                 esac
-                cd "$PRJ_ROOT/.zmk"
+                cd "$PRJ_ROOT/out/zmk"
                 # Avoid west's wrapper prepending a Python without our build modules.
                 python3 -m west build -s zmk/app -d "build/$layout" \
                   -b keyboardio_preonic -p auto "$@" -- \
-                  -DZephyr_DIR="$PRJ_ROOT/.zmk/zephyr/share/zephyr-package/cmake" \
+                  -DZephyr_DIR="$PRJ_ROOT/out/zmk/zephyr/share/zephyr-package/cmake" \
                   -DZMK_CONFIG="$PRJ_ROOT/config" \
                   -DKEYMAP_FILE="$PRJ_ROOT/config/$layout.keymap" \
                   -DZMK_EXTRA_MODULES="$PRJ_ROOT" \
@@ -106,7 +106,7 @@
                 ''
                   set -euo pipefail
                   cd "$PRJ_ROOT"
-                  layout=.zmk/keyboardio-preonic-zmk-module/boards/arm/keyboardio_preonic/keyboardio_preonic-layouts.dtsi
+                  layout=out/zmk/keyboardio-preonic-zmk-module/boards/arm/keyboardio_preonic/keyboardio_preonic-layouts.dtsi
                   if [[ ! -f "$layout" ]]; then
                     echo "Missing Preonic layout: run zmk-init first." >&2
                     exit 1

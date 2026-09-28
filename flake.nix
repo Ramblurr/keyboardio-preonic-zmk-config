@@ -43,27 +43,34 @@
             }
             {
               name = "zmk-build";
-              help = "Build Preonic firmware (run zmk-init first)";
+              help = "Build firmware: zmk-build [qwerty|colemak-dhm] [west build options]";
               command = ''
                 set -euo pipefail
+                layout=qwerty
+                case "''${1:-}" in
+                  qwerty|colemak-dhm) layout="$1"; shift ;;
+                  ""|-*) ;;
+                  *) echo "Unknown layout: $1 (use qwerty or colemak-dhm)" >&2; exit 2 ;;
+                esac
                 cd "$PRJ_ROOT/.zmk"
                 # Avoid west's wrapper prepending a Python without our build modules.
-                python3 -m west build -s zmk/app -d build/keyboardio_preonic \
+                python3 -m west build -s zmk/app -d "build/$layout" \
                   -b keyboardio_preonic -p auto "$@" -- \
                   -DZephyr_DIR="$PRJ_ROOT/.zmk/zephyr/share/zephyr-package/cmake" \
                   -DZMK_CONFIG="$PRJ_ROOT/config" \
+                  -DKEYMAP_FILE="$PRJ_ROOT/config/$layout.keymap" \
                   -DZMK_EXTRA_MODULES="$PRJ_ROOT" \
                   -DCMAKE_POLICY_VERSION_MINIMUM=3.5
               '';
             }
             {
               name = "zmk-keymap";
-              help = "Export the current QWERTY keymap to out/ as SVG, PNG and PDF";
+              help = "Export QWERTY and Colemak-DHm keymaps to out/ as SVG, PNG and PDF";
               command =
                 let
                   drawerConfig = pkgs.writeText "preonic-keymap-drawer.yaml" ''
                     draw_config:
-                      footer_text: "QWERTY / US | Rotary encoder: volume | Triangle: inherit lower layer | Pink: held layer key"
+                      footer_text: "Host layout: US | Rotary encoder: volume | Triangle: inherit lower layer | Pink: held layer key"
                     parse_config:
                       raw_binding_map:
                         "&bootloader": "Bootloader"
@@ -105,16 +112,18 @@
                     exit 1
                   fi
                   mkdir -p out
-                  ${pkgs.keymap-drawer}/bin/keymap -c ${drawerConfig} parse \
-                    -z config/keyboardio_preonic.keymap -o out/qwerty.yaml
-                  ${pkgs.keymap-drawer}/bin/keymap -c ${drawerConfig} draw \
-                    out/qwerty.yaml -d "$layout" -l mit_layout -o out/qwerty.svg
-                  ${pkgs.inkscape}/bin/inkscape out/qwerty.svg \
-                    --export-type=png --export-filename=out/qwerty.png \
-                    --export-dpi=192 --export-background=white --export-background-opacity=1
-                  ${pkgs.inkscape}/bin/inkscape out/qwerty.svg \
-                    --export-type=pdf --export-filename=out/qwerty.pdf
-                  printf 'Exported %s/out/qwerty.{svg,png,pdf}\n' "$PRJ_ROOT"
+                  for keymap in qwerty colemak-dhm; do
+                    ${pkgs.keymap-drawer}/bin/keymap -c ${drawerConfig} parse \
+                      -z "config/$keymap.keymap" -o "out/$keymap.yaml"
+                    ${pkgs.keymap-drawer}/bin/keymap -c ${drawerConfig} draw \
+                      "out/$keymap.yaml" -d "$layout" -l mit_layout -o "out/$keymap.svg"
+                    ${pkgs.inkscape}/bin/inkscape "out/$keymap.svg" \
+                      --export-type=png --export-filename="out/$keymap.png" \
+                      --export-dpi=192 --export-background=white --export-background-opacity=1
+                    ${pkgs.inkscape}/bin/inkscape "out/$keymap.svg" \
+                      --export-type=pdf --export-filename="out/$keymap.pdf"
+                    printf 'Exported %s/out/%s.{svg,png,pdf}\n' "$PRJ_ROOT" "$keymap"
+                  done
                 '';
             }
           ];

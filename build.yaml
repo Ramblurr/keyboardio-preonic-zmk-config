@@ -19,3 +19,8 @@
 ---
 include:
   - board: keyboardio_preonic
+    artifact-name: preonic-qwerty
+    cmake-args: -DKEYMAP_FILE="$GITHUB_WORKSPACE/config/qwerty.keymap"
+  - board: keyboardio_preonic
+    artifact-name: preonic-colemak-dhm
+    cmake-args: -DKEYMAP_FILE="$GITHUB_WORKSPACE/config/colemak-dhm.keymap"

@@ -1,0 +1,3 @@
+// Colemak-DH matrix layout (formerly DHm), without the staggered-board Angle Mod.
+#define COLEMAK_DHM
+#include "preonic.dtsi"

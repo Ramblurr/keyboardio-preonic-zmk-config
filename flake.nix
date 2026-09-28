@@ -68,6 +68,11 @@
                       raw_binding_map:
                         "&bootloader": "Bootloader"
                         "&studio_unlock": "Unlock Studio"
+                        "&sw_bt1": {t: BT, h: "0 / Green"}
+                        "&sw_bt2": {t: BT, h: "1 / Red"}
+                        "&sw_bt3": {t: BT, h: "2 / Magenta"}
+                        "&sw_bt4": {t: BT, h: "3 / Violet"}
+                        "&sw_bt5": {t: BT, h: "4 / Yellow"}
                       zmk_keycode_map:
                         C_PP: "Play/Pause"
                         LC(LS(LA(LGUI))): "Hyper"

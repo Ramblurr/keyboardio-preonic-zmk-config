@@ -55,6 +55,7 @@
                 cd "$PRJ_ROOT/out/zmk"
                 # Avoid west's wrapper prepending a Python without our build modules.
                 python3 -m west build -s zmk/app -d "build/$layout" \
+                  -S studio-rpc-usb-uart \
                   -b keyboardio_preonic -p auto "$@" -- \
                   -DZephyr_DIR="$PRJ_ROOT/out/zmk/zephyr/share/zephyr-package/cmake" \
                   -DZMK_CONFIG="$PRJ_ROOT/config" \

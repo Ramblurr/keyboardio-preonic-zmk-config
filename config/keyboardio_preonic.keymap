@@ -22,10 +22,24 @@
 // Hyper key: all the modifiers
 #define HYPER LC(LS(LA(LGUI)))
 
+// Tap for the normal key; hold for its shifted version.
+#define AS(keycode) &as LS(keycode) keycode
+
 / {
     chosen {
         // Valid choices: [ &mit_layout, &ortho_layout ]
         zmk,physical-layout = &mit_layout;
+    };
+
+    behaviors {
+        as: auto_shift {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            tapping-term-ms = <170>;
+            quick-tap-ms = <0>;
+            flavor = "tap-preferred";
+            bindings = <&kp>, <&kp>;
+        };
     };
 
     keymap {
@@ -36,10 +50,10 @@
             bindings = <
                                                                                                              &kp C_PP    &mo FN      &kp C_MUTE
 
- &kp GRAVE   &kp N1      &kp N2      &kp N3      &kp N4      &kp N5      &kp N6      &kp N7      &kp N8      &kp N9      &kp N0      &kp MINUS
- &kp TAB     &kp Q       &kp W       &kp E       &kp R       &kp T       &kp Y       &kp U       &kp I       &kp O       &kp P       &kp BKSP
- &kp ESC     &kp A       &kp S       &kp D       &kp F       &kp G       &kp H       &kp J       &kp K       &kp L       &kp SEMI    &kp SQT
- &kp LSHFT   &kp Z       &kp X       &kp C       &kp V       &kp B       &kp N       &kp M       &kp COMMA   &kp PERIOD  &kp SLASH   &kp ENTER
+ AS(GRAVE)   AS(N1)      AS(N2)      AS(N3)      AS(N4)      AS(N5)      AS(N6)      AS(N7)      AS(N8)      AS(N9)      AS(N0)      AS(MINUS)
+ &kp TAB     AS(Q)       AS(W)       AS(E)       AS(R)       AS(T)       AS(Y)       AS(U)       AS(I)       AS(O)       AS(P)       &kp BKSP
+ &kp ESC     AS(A)       AS(S)       AS(D)       AS(F)       AS(G)       AS(H)       AS(J)       AS(K)       AS(L)       AS(SEMI)    AS(SQT)
+ &kp LSHFT   AS(Z)       AS(X)       AS(C)       AS(V)       AS(B)       AS(N)       AS(M)       AS(COMMA)   AS(PERIOD)  AS(SLASH)   &kp ENTER
  &kp HYPER   &kp LCTRL   &kp LALT    &kp LGUI    &mo LOWER         &kp SPACE         &mo RAISE   &kp LEFT    &kp DOWN    &kp UP      &kp RIGHT
 
             >;

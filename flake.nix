@@ -52,6 +52,10 @@
                   ""|-*) ;;
                   *) echo "Unknown layout: $1 (use qwerty or colemak-dhm)" >&2; exit 2 ;;
                 esac
+                if [[ ! -d "$PRJ_ROOT/out/zmk/.west" ]]; then
+                  echo "ZMK workspace is not initialized. Run zmk-init first, then retry zmk-build." >&2
+                  exit 1
+                fi
                 cd "$PRJ_ROOT/out/zmk"
                 # Avoid west's wrapper prepending a Python without our build modules.
                 python3 -m west build -s zmk/app -d "build/$layout" \
